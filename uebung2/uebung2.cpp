@@ -3,6 +3,8 @@
 #include <sstream>
 #include <fstream>
 #include <cstring>
+#include <random>
+
 
 
 using namespace std;
@@ -76,8 +78,7 @@ int main() {
 	//cl_int const executeError = clEnqueueNDRangeKernel(myCommandQueue, myKernel, 1, NULL, &global_work_size, &local_work_size, 0, NULL, NULL);
 	//if (CL_SUCCESS == executeError) cout << "Kernel executed" << endl;
 	//else cerr << "Couldn't execute kernel: " << executeError <<  endl;
-	
-	
+
 
 	executeMathKernel(myContext, myCommandQueue, myKernel);
 
@@ -179,11 +180,23 @@ void executeMathKernel(cl_context const & context, cl_command_queue & commandQue
 	cl_uint const elements = 5;
 	cl_uint const matrixBytes = elements * elements * sizeof(cl_int);
 	cl_uint const vectorBytes = elements * sizeof(cl_int);
-
-
-	cl_int vectorA[] = {5,10,15,20,25,5,10,15,20,25, 5,10,15,20,25, 5,10,15,20,25, 5,10,15,20,25};
+	
+	
+	//RANDOM NUMBERS
+	cl_int randomVector[25];
+	int numberOfNrs = 25;
+	for (int i = 0; i < numberOfNrs; i++) {
+		random_device dev;
+		mt19937 rng(dev());
+		uniform_int_distribution<mt19937::result_type> randBetw1And6(1, 6);
+		int randomNum = randBetw1And6(rng);
+		randomVector[i] = randomNum;
+		cout << randomNum << endl;
+	}
+	
+	//cl_int vectorA[] = {5,10,15,20,25,  5,10,15,20,25,  5,10,15,20,25,  5,10,15,20,25,  5,10,15,20,25}; Alter Vektor!
 	cl_int vectorAError = CL_SUCCESS;
-	cl_mem const kernelVectorA = clCreateBuffer(context, CL_MEM_READ_ONLY| CL_MEM_COPY_HOST_PTR, matrixBytes, vectorA, &vectorAError);
+	cl_mem const kernelVectorA = clCreateBuffer(context, CL_MEM_READ_ONLY| CL_MEM_COPY_HOST_PTR, matrixBytes, randomVector, &vectorAError);
 	if (CL_SUCCESS == vectorAError) cout << "vectorA laeuft" << endl;
 	else cerr << "vectorAError: " << vectorAError << endl;
 
